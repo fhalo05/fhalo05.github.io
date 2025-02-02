@@ -74,20 +74,21 @@
             margin-top: 20px;
         }
 
-        #card-info {
+        #card-info, #injury-info {
             font-size: 1.2em;
             margin-top: 20px;
             color: #dc3545;
         }
 
-        #card-probability-slider, #injury-probability-slider {
-            width: 50%; /* Adjusted width of the sliders */
-            margin-top: 20px;
+        #card-probability, #injury-probability {
+            margin-top: 10px;
+            margin-bottom: 20px;
         }
 
-        #card-probability-value, #injury-probability-value {
-            margin-left: 10px;
+        #probability-value, #injury-value {
+            font-size: 1.2em;
             font-weight: bold;
+            color: #333;
         }
     </style>
 </head>
@@ -137,18 +138,17 @@
         <p id="injury-info"></p>
     </div>
 
-    <!-- Card Probability Slider -->
-    <div>
-        <label for="card-probability-slider">Card Probability:</label>
-        <input type="range" id="card-probability-slider" min="0" max="100" value="25">
-        <span id="card-probability-value">25%</span> <!-- Added the percentage display -->
+    <!-- Probability Sliders -->
+    <div id="card-probability">
+        <h3>Card Probability</h3>
+        <input type="range" id="card-probability-slider" min="0" max="100" value="25" onchange="updateCardProbability()">
+        <span id="probability-value">25%</span>
     </div>
 
-    <!-- Injury Probability Slider -->
-    <div>
-        <label for="injury-probability-slider">Injury Probability:</label>
-        <input type="range" id="injury-probability-slider" min="0" max="100" value="10">
-        <span id="injury-probability-value">10%</span> <!-- Added the injury percentage display -->
+    <div id="injury-probability">
+        <h3>Injury Probability</h3>
+        <input type="range" id="injury-probability-slider" min="0" max="100" value="10" onchange="updateInjuryProbability()">
+        <span id="injury-value">10%</span>
     </div>
 
     <script>
@@ -228,62 +228,47 @@
             }
         }
 
-        // Function to randomly assign cards (25% chance) and announce the player with team name
+        // Function to assign cards (random chance based on slider)
         function assignCards(team1, team2) {
-            const players1 = teams[team1];
-            const players2 = teams[team2];
-
-            const cardProbability = document.getElementById('card-probability-slider').value / 100; // Convert to a value between 0 and 1
-            const randomChance = Math.random();
+            const cardProbability = document.getElementById('card-probability-slider').value / 100;
+            const cardChance = Math.random();
             const cardInfo = document.getElementById('card-info');
-            cardInfo.textContent = ''; // Reset previous card info
+            cardInfo.textContent = '';
 
-            // Assign card to player (based on user-defined probability)
-            if (randomChance <= cardProbability) {
-                const cardType = Math.random() > 0.5 ? 'Yellow' : 'Red'; // Randomly choose card type
-                const playerIndex1 = Math.floor(Math.random() * players1.length); // Random player index for team 1
-                const playerIndex2 = Math.floor(Math.random() * players2.length); // Random player index for team 2
+            if (cardChance <= cardProbability) {
+                const players1 = teams[team1];
+                const players2 = teams[team2];
 
-                const randomPlayer = Math.random() > 0.5 ? players1[playerIndex1] : players2[playerIndex2];
-                const playerTeam = players1.includes(randomPlayer) ? team1 : team2;  // Determine which team the player belongs to
+                const randomTeam = Math.random() > 0.5 ? team1 : team2;
+                const randomPlayer = randomTeam === team1
+                    ? players1[Math.floor(Math.random() * players1.length)]
+                    : players2[Math.floor(Math.random() * players2.length)];
 
-                // Choose reason for card based on type
-                const reasons = {
-                    yellow: ['foul', 'time-wasting', 'dissent', 'reckless tackle', 'unsporting behavior'],
-                    red: ['violent conduct', 'serious foul play', 'spitting', 'denial of a clear goal-scoring opportunity']
-                };
-
-                const reason = reasons[cardType.toLowerCase()][Math.floor(Math.random() * reasons[cardType.toLowerCase()].length)];
-
-                // Announce the player who got the card and the reason
-                const cardMessage = `${randomPlayer} from ${playerTeam} received a ${cardType} card for ${reason}.`;
+                const cardType = Math.random() > 0.5 ? 'Yellow' : 'Red';
+                const cardMessage = `${randomPlayer} from ${randomTeam} received a ${cardType} card.`;
                 cardInfo.textContent = cardMessage;
-
-                // Speak the card info aloud
                 speakMessage(cardMessage);
             }
         }
 
-        // Function to randomly assign injury (based on injury probability slider)
+        // Function to assign injury (random chance based on injury slider)
         function assignInjury(team1, team2) {
             const injuryProbability = document.getElementById('injury-probability-slider').value / 100;
             const injuryChance = Math.random();
-
             const injuryInfo = document.getElementById('injury-info');
-            injuryInfo.textContent = ''; // Reset previous injury info
+            injuryInfo.textContent = '';
 
             if (injuryChance <= injuryProbability) {
                 const players1 = teams[team1];
                 const players2 = teams[team2];
 
-                const randomPlayer = Math.random() > 0.5
+                const randomTeam = Math.random() > 0.5 ? team1 : team2;
+                const randomPlayer = randomTeam === team1
                     ? players1[Math.floor(Math.random() * players1.length)]
                     : players2[Math.floor(Math.random() * players2.length)];
 
-                const injuryMessage = `${randomPlayer} from ${Math.random() > 0.5 ? team1 : team2} has been injured!`;
+                const injuryMessage = `${randomPlayer} from ${randomTeam} has been injured!`;
                 injuryInfo.textContent = injuryMessage;
-
-                // Speak the injury info aloud
                 speakMessage(injuryMessage);
             }
         }
@@ -297,38 +282,24 @@
 
             // Ensure the teams are selected and not the same team
             if (team1 && team2 && team1 !== team2) {
-                // Randomly generate scores for both teams
                 const score1 = Math.floor(Math.random() * 5);
                 const score2 = Math.floor(Math.random() * 5);
 
-                // Update the league stats based on the match result
+                // Update league stats and display match result
                 updateLeagueStats(team1, team2, score1, score2);
+                document.getElementById('match-result').textContent = `${team1} ${score1} - ${score2} ${team2}`;
+                document.getElementById('match-feedback').textContent = 
+                    score1 > score2 ? `You won! ${team1} triumphed.` : score1 < score2 ? `You lost! ${team2} won.` : `It's a draw! Both teams fought hard.`;
 
-                // Display match result and provide feedback
-                const matchResult = `${team1} ${score1} - ${score2} ${team2}`;
-                document.getElementById('match-result').textContent = matchResult;
-
-                // Provide feedback
-                const feedback = score1 > score2
-                    ? `You won! ${team1} triumphed.`
-                    : score1 < score2
-                    ? `You lost! ${team2} won.`
-                    : `It's a draw! Both teams fought hard.`;
-
-                document.getElementById('match-feedback').textContent = feedback;
-                document.getElementById('game-message').textContent = "Match completed! Check the updated table.";
-
-                // Assign cards and announce the player who got a card
+                // Assign cards and injuries
                 assignCards(team1, team2);
-
-                // Assign injuries based on injury probability
                 assignInjury(team1, team2);
 
-                // Update the league table
+                // Update league table
                 renderTable();
 
                 // Optional: Give a voiceover message about the match
-                const message = `${team1} scored ${score1}. ${team2} scored ${score2}. ${feedback}`;
+                const message = `${team1} scored ${score1}. ${team2} scored ${score2}. ${document.getElementById('match-feedback').textContent}`;
                 speakMessage(message);
             } else {
                 alert('Please choose two different teams for the match!');
@@ -339,16 +310,15 @@
         function speakMessage(message) {
             const utterance = new SpeechSynthesisUtterance(message);
             utterance.pitch = 1;
-            utterance.rate = 0.8;  // Adjusted for better speed
+            utterance.rate = 0.9; // Slow down the voice for clarity
             utterance.volume = 1;
             window.speechSynthesis.speak(utterance);
         }
 
-        // Function to populate team selection dropdowns
+        // Function to populate team selectors
         function populateTeamSelectors() {
             const team1Select = document.getElementById('team1');
             const team2Select = document.getElementById('team2');
-
             Object.keys(teams).forEach(team => {
                 const option1 = document.createElement('option');
                 option1.value = team;
@@ -362,19 +332,21 @@
             });
         }
 
-        // Initial setup
+        // Update card probability value
+        function updateCardProbability() {
+            const cardProbabilityValue = document.getElementById('card-probability-slider').value;
+            document.getElementById('probability-value').textContent = `${cardProbabilityValue}%`;
+        }
+
+        // Update injury probability value
+        function updateInjuryProbability() {
+            const injuryProbabilityValue = document.getElementById('injury-probability-slider').value;
+            document.getElementById('injury-value').textContent = `${injuryProbabilityValue}%`;
+        }
+
+        // Initialize page
         populateTeamSelectors();
         renderTable();
-
-        // Update the percentage display for card probability slider when it changes
-        document.getElementById('card-probability-slider').addEventListener('input', function() {
-            document.getElementById('card-probability-value').textContent = this.value + '%';
-        });
-
-        // Update the percentage display for injury probability slider when it changes
-        document.getElementById('injury-probability-slider').addEventListener('input', function() {
-            document.getElementById('injury-probability-value').textContent = this.value + '%';
-        });
     </script>
 </body>
 </html>
