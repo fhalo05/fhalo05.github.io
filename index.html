@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Premier League Simulator Game</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f8f8f8;
+        }
+
+        h1 {
+            color: #0056b3;
+        }
+
+        #league-table, #match-list {
+            margin-top: 20px;
+        }
+
+        table {
+            width: 80%;
+            margin: 0 auto;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: center;
+        }
+
+        th {
+            background-color: #0056b3;
+            color: white;
+        }
+
+        button {
+            padding: 10px 20px;
+            margin-top: 20px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #218838;
+        }
+
+        #match-form {
+            margin-top: 20px;
+        }
+
+        #match-form select {
+            padding: 10px;
+            margin-right: 10px;
+        }
+
+        #match-progress {
+            margin-top: 20px;
+        }
+
+        .match-result {
+            margin-top: 10px;
+            font-size: 1.2em;
+        }
+
+        .game-message {
+            font-size: 1.4em;
+            font-weight: bold;
+            color: #28a745;
+            margin-top: 20px;
+        }
+
+        #card-info {
+            font-size: 1.2em;
+            margin-top: 20px;
+            color: #dc3545;
+        }
+
+        #card-probability-slider {
+            width: 50%; /* Adjusted width of the slider */
+            margin-top: 20px;
+        }
+
+        #card-probability-value {
+            margin-left: 10px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <h1>Premier League Simulator Game</h1>
+    
+    <!-- League Table -->
+    <div id="league-table">
+        <h2>Current League Table</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Position</th>
+                    <th>Team</th>
+                    <th>Played</th>
+                    <th>Won</th>
+                    <th>Drawn</th>
+                    <th>Lost</th>
+                    <th>Points</th>
+                </tr>
+            </thead>
+            <tbody id="table-body">
+                <!-- Table data will be inserted here -->
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Match Form -->
+    <div id="match-form">
+        <h2>Pick a Match</h2>
+        <select id="team1">
+            <option value="">Choose Team 1</option>
+        </select>
+        <select id="team2">
+            <option value="">Choose Team 2</option>
+        </select>
+        <button onclick="startMatch()">Start Match</button>
+    </div>
+
+    <!-- Match Result and Feedback -->
+    <div id="match-progress">
+        <h3>Match Result</h3>
+        <p id="match-feedback"></p>
+        <p id="match-result" class="match-result"></p>
+        <p id="game-message" class="game-message"></p>
+        <p id="card-info"></p>
+    </div>
+
+    <!-- Card Probability Slider -->
+    <div>
+        <label for="card-probability-slider">Card Probability:</label>
+        <input type="range" id="card-probability-slider" min="0" max="100" value="25">
+        <span id="card-probability-value">25%</span> <!-- Added the percentage display -->
+    </div>
+
+    <script>
+        const teams = {
+            'Manchester United': ['Bruno Fernandes', 'Marcus Rashford', 'Casemiro', 'Christian Eriksen', 'David de Gea'],
+            'Manchester City': ['Erling Haaland', 'Kevin De Bruyne', 'Jack Grealish', 'Ruben Dias', 'Phil Foden'],
+            'Liverpool': ['Mohamed Salah', 'Virgil van Dijk', 'Sadio Mane', 'Alisson Becker', 'Trent Alexander-Arnold'],
+            'Chelsea': ['Kai Havertz', 'Mason Mount', 'Thiago Silva', 'Reece James', 'Enzo Fernandez'],
+            'Arsenal': ['Bukayo Saka', 'Martin Ødegaard', 'Gabriel Jesus', 'William Saliba', 'Aaron Ramsdale'],
+            'Tottenham': ['Harry Kane', 'Son Heung-min', 'Richarlison', 'Pierre-Emile Højbjerg', 'Hugo Lloris'],
+            'West Ham United': ['Declan Rice', 'Jarrod Bowen', 'Tomas Soucek', 'Lucas Paquetá', 'Alphonse Areola'],
+            'Leicester City': ['James Maddison', 'Harvey Barnes', 'Kasper Schmeichel', 'Youri Tielemans', 'Wilfred Ndidi'],
+            'Aston Villa': ['Ollie Watkins', 'Philippe Coutinho', 'Emiliano Martínez', 'Tyrone Mings', 'Leon Bailey'],
+            'Newcastle United': ['Miguel Almirón', 'Bruno Guimarães', 'Callum Wilson', 'Kieran Trippier', 'Nick Pope'],
+            'Wolverhampton Wanderers': ['Raul Jimenez', 'Pedro Neto', 'Ruben Neves', 'João Moutinho', 'José Sá'],
+            'Crystal Palace': ['Wilfried Zaha', 'Eberechi Eze', 'Jordan Ayew', 'Vicente Guaita', 'Joachim Andersen'],
+            'Brighton & Hove Albion': ['Leandro Trossard', 'Pascal Groß', 'Robert Sánchez', 'Adam Webster', 'Moisés Caicedo'],
+            'Southampton': ['James Ward-Prowse', 'Che Adams', 'Theo Walcott', 'Romeo Lavia', 'Gavin Bazunu'],
+            'Everton': ['Dominic Calvert-Lewin', 'Richarlison', 'Jordan Pickford', 'Abdoulaye Doucouré', 'Alex Iwobi'],
+            'Leeds United': ['Rodrigo', 'Jack Harrison', 'Illan Meslier', 'Kalvin Phillips', 'Patrick Bamford'],
+            'Brentford': ['Ivan Toney', 'Bryan Mbeumo', 'David Raya', 'Christian Nørgaard', 'Mathias Jensen'],
+            'Nottingham Forest': ['Taiwo Awoniyi', 'Morgan Gibbs-White', 'Dean Henderson', 'Nico Williams', 'Serge Aurier'],
+            'Bournemouth': ['Dominic Solanke', 'Philip Billing', 'Mark Travers', 'Jaidon Anthony', 'Jefferson Lerma'],
+            'Fulham': ['Aleksandar Mitrović', 'Andreas Pereira', 'Harrison Reed', 'Antonee Robinson', 'Bernd Leno']
+        };
+
+        let leagueTable = Object.keys(teams).map(team => ({
+            name: team,
+            played: 0,
+            won: 0,
+            drawn: 0,
+            lost: 0,
+            points: 0
+        }));
+
+        // Function to render the league table
+        function renderTable() {
+            leagueTable.sort((a, b) => b.points - a.points);
+            const tableBody = document.getElementById('table-body');
+            tableBody.innerHTML = '';
+            leagueTable.forEach((team, index) => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${index + 1}</td>
+                    <td>${team.name}</td>
+                    <td>${team.played}</td>
+                    <td>${team.won}</td>
+                    <td>${team.drawn}</td>
+                    <td>${team.lost}</td>
+                    <td>${team.points}</td>
+                `;
+                tableBody.appendChild(row);
+            });
+        }
+
+        // Function to update the league stats after each match
+        function updateLeagueStats(teamName1, teamName2, score1, score2) {
+            const team1 = leagueTable.find(t => t.name === teamName1);
+            const team2 = leagueTable.find(t => t.name === teamName2);
+
+            team1.played++;
+            team2.played++;
+
+            if (score1 > score2) {
+                team1.won++;
+                team2.lost++;
+                team1.points += 3;
+            } else if (score1 < score2) {
+                team2.won++;
+                team1.lost++;
+                team2.points += 3;
+            } else {
+                team1.drawn++;
+                team2.drawn++;
+                team1.points += 1;
+                team2.points += 1;
+            }
+        }
+
+        // Function to randomly assign cards (25% chance) and announce the player with team name
+        function assignCards(team1, team2) {
+            const players1 = teams[team1];
+            const players2 = teams[team2];
+
+            const cardProbability = document.getElementById('card-probability-slider').value / 100; // Convert to a value between 0 and 1
+            const randomChance = Math.random();
+            const cardInfo = document.getElementById('card-info');
+            cardInfo.textContent = ''; // Reset previous card info
+
+            // Assign card to player (based on user-defined probability)
+            if (randomChance <= cardProbability) {
+                const cardType = Math.random() > 0.5 ? 'Yellow' : 'Red'; // Randomly choose card type
+                const playerIndex1 = Math.floor(Math.random() * players1.length); // Random player index for team 1
+                const playerIndex2 = Math.floor(Math.random() * players2.length); // Random player index for team 2
+
+                const randomPlayer = Math.random() > 0.5 ? players1[playerIndex1] : players2[playerIndex2];
+                const playerTeam = players1.includes(randomPlayer) ? team1 : team2;  // Determine which team the player belongs to
+
+                // Choose reason for card based on type
+                const reasons = {
+                    yellow: ['foul', 'time-wasting', 'dissent', 'reckless tackle', 'unsporting behavior'],
+                    red: ['violent conduct', 'serious foul play', 'spitting', 'denial of a clear goal-scoring opportunity']
+                };
+
+                const reason = reasons[cardType.toLowerCase()][Math.floor(Math.random() * reasons[cardType.toLowerCase()].length)];
+
+                // Announce the player who got the card and the reason
+                const cardMessage = `${randomPlayer} from ${playerTeam} received a ${cardType} card for ${reason}.`;
+                cardInfo.textContent = cardMessage;
+
+                // Speak the card info aloud
+                speakMessage(cardMessage);
+            }
+        }
+
+        // Function to simulate match scores and give feedback
+        function startMatch() {
+            const team1Select = document.getElementById('team1');
+            const team2Select = document.getElementById('team2');
+            const team1 = team1Select.value;
+            const team2 = team2Select.value;
+
+            // Ensure the teams are selected and not the same team
+            if (team1 && team2 && team1 !== team2) {
+                // Randomly generate scores for both teams
+                const score1 = Math.floor(Math.random() * 5);
+                const score2 = Math.floor(Math.random() * 5);
+
+                // Update the league stats based on the match result
+                updateLeagueStats(team1, team2, score1, score2);
+
+                // Display match result and provide feedback
+                const matchResult = `${team1} ${score1} - ${score2} ${team2}`;
+                document.getElementById('match-result').textContent = matchResult;
+
+                // Provide feedback
+                const feedback = score1 > score2
+                    ? `You won! ${team1} triumphed.`
+                    : score1 < score2
+                    ? `You lost! ${team2} won.`
+                    : `It's a draw! Both teams fought hard.`;
+
+                document.getElementById('match-feedback').textContent = feedback;
+                document.getElementById('game-message').textContent = "Match completed! Check the updated table.";
+
+                // Assign cards and announce the player who got a card
+                assignCards(team1, team2);
+
+                // Update the league table
+                renderTable();
+
+                // Optional: Give a voiceover message about the match
+                const message = `${team1} scored ${score1}. ${team2} scored ${score2}. ${feedback}`;
+                speakMessage(message);
+            } else {
+                alert('Please choose two different teams for the match!');
+            }
+        }
+
+        // Function to speak the message
+        function speakMessage(message) {
+            const utterance = new SpeechSynthesisUtterance(message);
+            utterance.pitch = 1;
+            utterance.rate = 0.8;  // Adjusted for better speed
+            utterance.volume = 1;
+            window.speechSynthesis.speak(utterance);
+        }
+
+        // Function to populate team selection dropdowns
+        function populateTeamSelectors() {
+            const team1Select = document.getElementById('team1');
+            const team2Select = document.getElementById('team2');
+
+            Object.keys(teams).forEach(team => {
+                const option1 = document.createElement('option');
+                option1.value = team;
+                option1.textContent = team;
+                team1Select.appendChild(option1);
+
+                const option2 = document.createElement('option');
+                option2.value = team;
+                option2.textContent = team;
+                team2Select.appendChild(option2);
+            });
+        }
+
+        // Initial setup
+        populateTeamSelectors();
+        renderTable();
+
+        // Update the percentage display when the slider changes
+        document.getElementById('card-probability-slider').addEventListener('input', function() {
+            document.getElementById('card-probability-value').textContent = this.value + '%';
+        });
+    </script>
+</body>
+</html>
