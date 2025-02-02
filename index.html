@@ -80,12 +80,12 @@
             color: #dc3545;
         }
 
-        #card-probability-slider {
-            width: 50%; /* Adjusted width of the slider */
+        #card-probability-slider, #injury-probability-slider {
+            width: 50%; /* Adjusted width of the sliders */
             margin-top: 20px;
         }
 
-        #card-probability-value {
+        #card-probability-value, #injury-probability-value {
             margin-left: 10px;
             font-weight: bold;
         }
@@ -134,6 +134,7 @@
         <p id="match-result" class="match-result"></p>
         <p id="game-message" class="game-message"></p>
         <p id="card-info"></p>
+        <p id="injury-info"></p>
     </div>
 
     <!-- Card Probability Slider -->
@@ -141,6 +142,13 @@
         <label for="card-probability-slider">Card Probability:</label>
         <input type="range" id="card-probability-slider" min="0" max="100" value="25">
         <span id="card-probability-value">25%</span> <!-- Added the percentage display -->
+    </div>
+
+    <!-- Injury Probability Slider -->
+    <div>
+        <label for="injury-probability-slider">Injury Probability:</label>
+        <input type="range" id="injury-probability-slider" min="0" max="100" value="10">
+        <span id="injury-probability-value">10%</span> <!-- Added the injury percentage display -->
     </div>
 
     <script>
@@ -241,8 +249,8 @@
 
                 // Choose reason for card based on type
                 const reasons = {
-                    yellow: ['Foul', 'Time-wasting', 'Dissent', 'Reckless tackle', 'Unsporting behavior', 'Swaring'],
-                    red: ['Violent conduct', 'Serious foul play', 'Spitting', 'Denial of a lear goal-scoring opportunity', 'Being drunk']
+                    yellow: ['foul', 'time-wasting', 'dissent', 'reckless tackle', 'unsporting behavior'],
+                    red: ['violent conduct', 'serious foul play', 'spitting', 'denial of a clear goal-scoring opportunity']
                 };
 
                 const reason = reasons[cardType.toLowerCase()][Math.floor(Math.random() * reasons[cardType.toLowerCase()].length)];
@@ -253,6 +261,30 @@
 
                 // Speak the card info aloud
                 speakMessage(cardMessage);
+            }
+        }
+
+        // Function to randomly assign injury (based on injury probability slider)
+        function assignInjury(team1, team2) {
+            const injuryProbability = document.getElementById('injury-probability-slider').value / 100;
+            const injuryChance = Math.random();
+
+            const injuryInfo = document.getElementById('injury-info');
+            injuryInfo.textContent = ''; // Reset previous injury info
+
+            if (injuryChance <= injuryProbability) {
+                const players1 = teams[team1];
+                const players2 = teams[team2];
+
+                const randomPlayer = Math.random() > 0.5
+                    ? players1[Math.floor(Math.random() * players1.length)]
+                    : players2[Math.floor(Math.random() * players2.length)];
+
+                const injuryMessage = `${randomPlayer} from ${Math.random() > 0.5 ? team1 : team2} has been injured!`;
+                injuryInfo.textContent = injuryMessage;
+
+                // Speak the injury info aloud
+                speakMessage(injuryMessage);
             }
         }
 
@@ -288,6 +320,9 @@
 
                 // Assign cards and announce the player who got a card
                 assignCards(team1, team2);
+
+                // Assign injuries based on injury probability
+                assignInjury(team1, team2);
 
                 // Update the league table
                 renderTable();
@@ -331,9 +366,14 @@
         populateTeamSelectors();
         renderTable();
 
-        // Update the percentage display when the slider changes
+        // Update the percentage display for card probability slider when it changes
         document.getElementById('card-probability-slider').addEventListener('input', function() {
             document.getElementById('card-probability-value').textContent = this.value + '%';
+        });
+
+        // Update the percentage display for injury probability slider when it changes
+        document.getElementById('injury-probability-slider').addEventListener('input', function() {
+            document.getElementById('injury-probability-value').textContent = this.value + '%';
         });
     </script>
 </body>
