@@ -11,13 +11,7 @@
             background-color: #f8f8f8;
         }
 
-        h1 {
-            color: #0056b3;
-        }
-
-        #league-table, #match-list {
-            margin-top: 20px;
-        }
+        h1 { color: #0056b3; }
 
         table {
             width: 80%;
@@ -31,88 +25,39 @@
             text-align: center;
         }
 
-        th {
-            background-color: #0056b3;
-            color: white;
-        }
+        th { background-color: #0056b3; color: white; }
 
-        button {
-            padding: 10px 20px;
-            margin-top: 20px;
-            background-color: #28a745;
-            color: white;
-            border: none;
-            cursor: pointer;
-        }
+        .slider-container { margin: 20px; }
 
-        button:hover {
-            background-color: #218838;
-        }
+        input[type="range"] { width: 300px; }
 
-        .slider-container {
-            margin: 20px;
-        }
+        .game-message { font-size: 1.4em; font-weight: bold; color: #28a745; margin-top: 20px; }
 
-        input[type="range"] {
-            width: 300px;
-        }
-
-        .game-message {
-            font-size: 1.4em;
-            font-weight: bold;
-            color: #28a745;
-            margin-top: 20px;
-        }
-
-        #card-info, #injury-info {
-            font-size: 1.2em;
-            margin-top: 20px;
-            color: #dc3545;
-        }
+        #card-info, #injury-info { font-size: 1.2em; margin-top: 20px; color: #dc3545; }
     </style>
 </head>
 <body>
     <h1>Premier League Simulator Game</h1>
 
-    <!-- League Table -->
-    <div id="league-table">
-        <h2>Current League Table</h2>
-        <table>
-            <thead>
-                <tr>
-                    <th>Position</th>
-                    <th>Team</th>
-                    <th>Played</th>
-                    <th>Won</th>
-                    <th>Drawn</th>
-                    <th>Lost</th>
-                    <th>Points</th>
-                </tr>
-            </thead>
-            <tbody id="table-body"></tbody>
-        </table>
+    <!-- Sliders for Probability -->
+    <div class="slider-container">
+        <label>Card Probability: <span id="card-probability-value">25%</span></label>
+        <input type="range" id="card-probability-slider" min="0" max="100" value="25" oninput="updateSlider('card')">
     </div>
 
-    <!-- Match Form -->
+    <div class="slider-container">
+        <label>Injury Probability: <span id="injury-probability-value">10%</span></label>
+        <input type="range" id="injury-probability-slider" min="0" max="100" value="10" oninput="updateSlider('injury')">
+    </div>
+
+    <!-- Match Controls -->
     <div id="match-form">
         <h2>Pick a Match</h2>
-        <select id="team1"><option value="">Choose Team 1</option></select>
-        <select id="team2"><option value="">Choose Team 2</option></select>
+        <select id="team1"></select>
+        <select id="team2"></select>
         <button onclick="startMatch()">Start Match</button>
     </div>
 
-    <!-- Sliders for Probability -->
-    <div class="slider-container">
-        <label>Card Probability: <span id="probability-value">25%</span></label>
-        <input type="range" id="card-probability-slider" min="0" max="100" value="25" oninput="updateCardProbability()">
-    </div>
-
-    <div class="slider-container">
-        <label>Injury Probability: <span id="injury-value">10%</span></label>
-        <input type="range" id="injury-probability-slider" min="0" max="100" value="10" oninput="updateInjuryProbability()">
-    </div>
-
-    <!-- Match Result and Feedback -->
     <div id="match-progress">
         <h3>Match Result</h3>
         <p id="match-result"></p>
@@ -146,80 +91,103 @@
         };
 
 
-        let leagueTable = Object.keys(teams).map(team => ({ name: team, played: 0, won: 0, drawn: 0, lost: 0, points: 0 }));
-
-        function renderTable() {
-            leagueTable.sort((a, b) => b.points - a.points);
-            document.getElementById('table-body').innerHTML = leagueTable.map((team, index) => `
-                <tr>
-                    <td>${index + 1}</td>
-                    <td>${team.name}</td>
-                    <td>${team.played}</td>
-                    <td>${team.won}</td>
-                    <td>${team.drawn}</td>
-                    <td>${team.lost}</td>
-                    <td>${team.points}</td>
-                </tr>
-            `).join('');
+        function updateSlider(type) {
+            if (type === 'card') {
+                document.getElementById('card-probability-value').textContent = document.getElementById('card-probability-slider').value + "%";
+            } else if (type === 'injury') {
+                document.getElementById('injury-probability-value').textContent = document.getElementById('injury-probability-slider').value + "%";
+            }
         }
 
-        function updateLeagueStats(team1, team2, score1, score2) {
-            let t1 = leagueTable.find(t => t.name === team1);
-            let t2 = leagueTable.find(t => t.name === team2);
-            t1.played++; t2.played++;
-            if (score1 > score2) { t1.won++; t1.points += 3; t2.lost++; }
-            else if (score1 < score2) { t2.won++; t2.points += 3; t1.lost++; }
-            else { t1.drawn++; t2.drawn++; t1.points++; t2.points++; }
+        function populateTeamSelectors() {
+            const team1Select = document.getElementById('team1');
+            const team2Select = document.getElementById('team2');
+
+            Object.keys(teams).forEach(team => {
+                let option1 = document.createElement('option');
+                option1.value = team;
+                option1.textContent = team;
+                team1Select.appendChild(option1);
+
+                let option2 = document.createElement('option');
+                option2.value = team;
+                option2.textContent = team;
+                team2Select.appendChild(option2);
+            });
+        }
+
+        function startMatch() {
+            const team1 = document.getElementById('team1').value;
+            const team2 = document.getElementById('team2').value;
+
+            if (!team1 || !team2 || team1 === team2) {
+                alert("Please select two different teams.");
+                return;
+            }
+
+            const score1 = Math.floor(Math.random() * 5);
+            const score2 = Math.floor(Math.random() * 5);
+            document.getElementById('match-result').textContent = `${team1} ${score1} - ${score2} ${team2}`;
+            document.getElementById('game-message').textContent = "Match completed!";
+
+            assignCards(team1, team2);
+            assignInjury(team1, team2);
         }
 
         function assignCards(team1, team2) {
-            if (Math.random() < document.getElementById('card-probability-slider').value / 100) {
-                let randomTeam = Math.random() > 0.5 ? team1 : team2;
-                let player = teams[randomTeam][Math.floor(Math.random() * 5)];
-                let cardType = Math.random() > 0.5 ? 'Yellow' : 'Red';
-                let reasons = ["for a reckless foul", "for dissent", "for time-wasting", "for violent conduct"];
-                let reason = reasons[Math.floor(Math.random() * reasons.length)];
-                let message = `${player} from ${randomTeam} received a ${cardType} card ${reason}.`;
+            const cardProbability = document.getElementById('card-probability-slider').value / 100;
+            const randomChance = Math.random();
+
+            if (randomChance < cardProbability) {
+                const teamsList = [team1, team2];
+                const chosenTeam = teamsList[Math.floor(Math.random() * 2)];
+                const players = teams[chosenTeam];
+                const chosenPlayer = players[Math.floor(Math.random() * players.length)];
+
+                const reasons = ["Dangerous tackle", "Handball", "Dissent", "Time-wasting", "Foul"];
+                const reason = reasons[Math.floor(Math.random() * reasons.length)];
+
+                const cardType = Math.random() > 0.5 ? "Yellow" : "Red";
+                const message = `${chosenPlayer} from ${chosenTeam} received a ${cardType} card for ${reason}.`;
+
                 document.getElementById('card-info').textContent = message;
                 speakMessage(message);
+            } else {
+                document.getElementById('card-info').textContent = "";
             }
         }
 
         function assignInjury(team1, team2) {
-            if (Math.random() < document.getElementById('injury-probability-slider').value / 100) {
-                let randomTeam = Math.random() > 0.5 ? team1 : team2;
-                let player = teams[randomTeam][Math.floor(Math.random() * 5)];
-                let injuries = ["ankle sprain", "hamstring strain", "knee injury"];
-                let injury = injuries[Math.floor(Math.random() * injuries.length)];
-                let message = `${player} from ${randomTeam} suffered a ${injury}.`;
+            const injuryProbability = document.getElementById('injury-probability-slider').value / 100;
+            const randomChance = Math.random();
+
+            if (randomChance < injuryProbability) {
+                const teamsList = [team1, team2];
+                const chosenTeam = teamsList[Math.floor(Math.random() * 2)];
+                const players = teams[chosenTeam];
+                const chosenPlayer = players[Math.floor(Math.random() * players.length)];
+
+                const injuries = ["Hamstring strain", "Ankle sprain", "Knee injury", "Head collision", "Muscle tear"];
+                const injuryType = injuries[Math.floor(Math.random() * injuries.length)];
+
+                const message = `${chosenPlayer} from ${chosenTeam} suffered a ${injuryType}.`;
                 document.getElementById('injury-info').textContent = message;
                 speakMessage(message);
+            } else {
+                document.getElementById('injury-info').textContent = "";
             }
         }
 
-        function startMatch() {
-            let team1 = document.getElementById('team1').value;
-            let team2 = document.getElementById('team2').value;
-            if (team1 && team2 && team1 !== team2) {
-                let score1 = Math.floor(Math.random() * 5);
-                let score2 = Math.floor(Math.random() * 5);
-                updateLeagueStats(team1, team2, score1, score2);
-                document.getElementById('match-result').textContent = `${team1} ${score1} - ${score2} ${team2}`;
-                assignCards(team1, team2);
-                assignInjury(team1, team2);
-                renderTable();
-            }
+        function speakMessage(message) {
+            const utterance = new SpeechSynthesisUtterance(message);
+            utterance.rate = 0.9;  // Slower speech speed
+            utterance.pitch = 1;
+            utterance.volume = 1;
+            window.speechSynthesis.speak(utterance);
         }
 
-        function speakMessage(msg) {
-            let utterance = new SpeechSynthesisUtterance(msg);
-            utterance.rate = 0.8;
-            speechSynthesis.speak(utterance);
-        }
-
-        document.getElementById('team1').innerHTML += Object.keys(teams).map(t => `<option>${t}</option>`).join('');
-        document.getElementById('team2').innerHTML += Object.keys(teams).map(t => `<option>${t}</option>`).join('');
-        renderTable();
+        populateTeamSelectors();
     </script>
 </body>
 </html>
+
