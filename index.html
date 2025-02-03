@@ -200,7 +200,8 @@
             if (Math.random() < prob) {
                 const team = Math.random() > 0.5 ? team1 : team2;
                 const player = teams[team][Math.floor(Math.random() * teams[team].length)];
-                document.getElementById('injury-info').textContent = `${player} from ${team} got injured.`;
+                const injuryReason = ["Hamstring strain", "Ankle sprain", "Knee injury", "Head collision"][Math.floor(Math.random() * 4)];
+                document.getElementById('injury-info').textContent = `${player} from ${team} got injured due to a ${injuryReason}.`;
             } else {
                 document.getElementById('injury-info').textContent = "";
             }
