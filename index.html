@@ -39,17 +39,6 @@
 <body>
     <h1>Premier League Simulator Game</h1>
 
-    <!-- Sliders for Probability -->
-    <div class="slider-container">
-        <label>Card Probability: <span id="card-probability-value">25%</span></label>
-        <input type="range" id="card-probability-slider" min="0" max="100" value="25" oninput="updateSlider('card')">
-    </div>
-
-    <div class="slider-container">
-        <label>Injury Probability: <span id="injury-probability-value">10%</span></label>
-        <input type="range" id="injury-probability-slider" min="0" max="100" value="10" oninput="updateSlider('injury')">
-    </div>
-
     <!-- League Table -->
     <div id="league-table">
         <h2>Current League Table</h2>
@@ -67,6 +56,17 @@
             </thead>
             <tbody id="table-body"></tbody>
         </table>
+    </div>
+
+    <!-- Sliders for Probability (Moved Below the Table) -->
+    <div class="slider-container">
+        <label>Card Probability: <span id="card-probability-value">25%</span></label>
+        <input type="range" id="card-probability-slider" min="0" max="100" value="25" oninput="updateSlider('card')">
+    </div>
+
+    <div class="slider-container">
+        <label>Injury Probability: <span id="injury-probability-value">10%</span></label>
+        <input type="range" id="injury-probability-slider" min="0" max="100" value="10" oninput="updateSlider('injury')">
     </div>
 
     <!-- Match Controls -->
@@ -108,7 +108,6 @@
             'Bournemouth': ['Dominic Solanke', 'Philip Billing', 'Mark Travers', 'Jaidon Anthony', 'Jefferson Lerma'],
             'Fulham': ['Aleksandar Mitrović', 'Andreas Pereira', 'Harrison Reed', 'Antonee Robinson', 'Bernd Leno']
         };
-
 
         let leagueTable = Object.keys(teams).map(team => ({
             name: team,
