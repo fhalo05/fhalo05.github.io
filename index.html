@@ -109,6 +109,7 @@
             'Fulham': ['Aleksandar Mitrović', 'Andreas Pereira', 'Harrison Reed', 'Antonee Robinson', 'Bernd Leno']
         };
 
+
         let leagueTable = Object.keys(teams).map(team => ({
             name: team,
             played: 0,
@@ -186,8 +187,11 @@
             if (Math.random() < prob) {
                 const team = Math.random() > 0.5 ? team1 : team2;
                 const player = teams[team][Math.floor(Math.random() * teams[team].length)];
+                const cardType = Math.random() > 0.75 ? "Red Card" : "Yellow Card"; // 25% chance of red
                 const reason = ["Dangerous tackle", "Handball", "Dissent"][Math.floor(Math.random() * 3)];
-                document.getElementById('card-info').textContent = `${player} from ${team} got a card for ${reason}.`;
+                document.getElementById('card-info').textContent = `${player} from ${team} received a ${cardType} for ${reason}.`;
+            } else {
+                document.getElementById('card-info').textContent = "";
             }
         }
 
@@ -197,6 +201,8 @@
                 const team = Math.random() > 0.5 ? team1 : team2;
                 const player = teams[team][Math.floor(Math.random() * teams[team].length)];
                 document.getElementById('injury-info').textContent = `${player} from ${team} got injured.`;
+            } else {
+                document.getElementById('injury-info').textContent = "";
             }
         }
 
