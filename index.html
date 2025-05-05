@@ -1,223 +1,81 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Premier League Simulator Game</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            text-align: center;
-            background-color: #f8f8f8;
-        }
-
-        h1 { color: #0056b3; }
-
-        table {
-            width: 80%;
-            margin: 20px auto;
-            border-collapse: collapse;
-        }
-
-        th, td {
-            border: 1px solid #ddd;
-            padding: 8px;
-            text-align: center;
-        }
-
-        th { background-color: #0056b3; color: white; }
-
-        .slider-container { margin: 20px; }
-
-        input[type="range"] { width: 300px; }
-
-        .game-message { font-size: 1.4em; font-weight: bold; color: #28a745; margin-top: 20px; }
-
-        #card-info, #injury-info { font-size: 1.2em; margin-top: 20px; color: #dc3545; }
-    </style>
+  <meta charset="UTF-8">
+  <title>Stripchat Stream Generator</title>
+  <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #111;
+      color: #fff;
+      padding: 20px;
+    }
+    input, button {
+      font-size: 16px;
+      padding: 10px;
+      margin-top: 10px;
+    }
+    video {
+      margin-top: 20px;
+      width: 100%;
+      max-width: 800px;
+      display: block;
+    }
+  </style>
 </head>
 <body>
-    <h1>Premier League Simulator Game</h1>
 
-    <!-- League Table -->
-    <div id="league-table">
-        <h2>Current League Table</h2>
-        <table>
-            <thead>
-                <tr>
-                    <th>Position</th>
-                    <th>Team</th>
-                    <th>Played</th>
-                    <th>Won</th>
-                    <th>Drawn</th>
-                    <th>Lost</th>
-                    <th>Points</th>
-                </tr>
-            </thead>
-            <tbody id="table-body"></tbody>
-        </table>
-    </div>
+  <h2>Stripchat Live Stream Generator</h2>
+  <label for="modelInput">Enter Model Username:</label><br>
+  <input type="text" id="modelInput" placeholder="e.g., Megancullenofficial">
+  <button onclick="loadStream()">Load Stream</button>
 
-    <!-- Sliders for Probability (Moved Below the Table) -->
-    <div class="slider-container">
-        <label>Card Probability: <span id="card-probability-value">25%</span></label>
-        <input type="range" id="card-probability-slider" min="0" max="100" value="25" oninput="updateSlider('card')">
-    </div>
+  <video id="video" controls autoplay muted></video>
 
-    <div class="slider-container">
-        <label>Injury Probability: <span id="injury-probability-value">10%</span></label>
-        <input type="range" id="injury-probability-slider" min="0" max="100" value="10" oninput="updateSlider('injury')">
-    </div>
+  <script>
+    async function loadStream() {
+      const username = document.getElementById('modelInput').value.trim();
+      if (!username) {
+        alert("Please enter a model username.");
+        return;
+      }
 
-    <!-- Match Controls -->
-    <div id="match-form">
-        <h2>Pick a Match</h2>
-        <select id="team1"></select>
-        <select id="team2"></select>
-        <button onclick="startMatch()">Start Match</button>
-    </div>
+      const apiUrl = `https://go.xxxiijmp.com/api/models?modelsList=${username}&strict=1`;
 
-    <div id="match-progress">
-        <h3>Match Result</h3>
-        <p id="match-result"></p>
-        <p id="game-message" class="game-message"></p>
-        <p id="card-info"></p>
-        <p id="injury-info"></p>
-    </div>
+      try {
+        const response = await fetch(apiUrl);
+        const data = await response.json();
 
-    <script>
-        const teams = {
-            'Manchester United': ['Bruno Fernandes', 'Marcus Rashford', 'Casemiro', 'Christian Eriksen', 'David de Gea'],
-            'Manchester City': ['Erling Haaland', 'Kevin De Bruyne', 'Jack Grealish', 'Ruben Dias', 'Phil Foden'],
-            'Liverpool': ['Mohamed Salah', 'Virgil van Dijk', 'Sadio Mane', 'Alisson Becker', 'Trent Alexander-Arnold'],
-            'Chelsea': ['Kai Havertz', 'Mason Mount', 'Thiago Silva', 'Reece James', 'Enzo Fernandez'],
-            'Arsenal': ['Forward Bukayo Saka', 'Midfielder Martin Odegaard', 'Forward Gabriel Jesus', 'Defender William Saliba', 'Forward Raheem Sterling'],
-            'Tottenham': ['Harry Kane', 'Son Heung-min', 'Richarlison', 'Pierre-Emile Højbjerg', 'Hugo Lloris'],
-            'West Ham United': ['Declan Rice', 'Jarrod Bowen', 'Tomas Soucek', 'Lucas Paquetá', 'Alphonse Areola'],
-            'Leicester City': ['James Maddison', 'Harvey Barnes', 'Kasper Schmeichel', 'Youri Tielemans', 'Wilfred Ndidi'],
-            'Aston Villa': ['Ollie Watkins', 'Philippe Coutinho', 'Emiliano Martínez', 'Tyrone Mings', 'Leon Bailey'],
-            'Newcastle United': ['Miguel Almirón', 'Bruno Guimarães', 'Callum Wilson', 'Kieran Trippier', 'Nick Pope'],
-            'Wolverhampton Wanderers': ['Raul Jimenez', 'Pedro Neto', 'Ruben Neves', 'João Moutinho', 'José Sá'],
-            'Crystal Palace': ['Wilfried Zaha', 'Eberechi Eze', 'Jordan Ayew', 'Vicente Guaita', 'Joachim Andersen'],
-            'Brighton & Hove Albion': ['Leandro Trossard', 'Pascal Groß', 'Robert Sánchez', 'Adam Webster', 'Moisés Caicedo'],
-            'Southampton': ['James Ward-Prowse', 'Che Adams', 'Theo Walcott', 'Romeo Lavia', 'Gavin Bazunu'],
-            'Everton': ['Dominic Calvert-Lewin', 'Richarlison', 'Jordan Pickford', 'Abdoulaye Doucouré', 'Alex Iwobi'],
-            'Ipswich Town': ['Forward Liam Delap', 'Midfielder Kalvin Phillips', 'Forward Omari Hutchinson', 'Midfielder Sam Morsy', 'Goalkeeper Arijanet Muric'],
-            'Brentford': ['Ivan Toney', 'Bryan Mbeumo', 'David Raya', 'Christian Nørgaard', 'Mathias Jensen'],
-            'Nottingham Forest': ['Taiwo Awoniyi', 'Morgan Gibbs-White', 'Dean Henderson', 'Nico Williams', 'Serge Aurier'],
-            'Bournemouth': ['Dominic Solanke', 'Philip Billing', 'Mark Travers', 'Jaidon Anthony', 'Jefferson Lerma'],
-            'Fulham': ['Aleksandar Mitrović', 'Andreas Pereira', 'Harrison Reed', 'Antonee Robinson', 'Bernd Leno']
-        };
+        const m3u8Url = data.models?.[0]?.stream?.url;
 
-
-        let leagueTable = Object.keys(teams).map(team => ({
-            name: team,
-            played: 0,
-            won: 0,
-            drawn: 0,
-            lost: 0,
-            points: 0
-        }));
-
-        function updateSlider(type) {
-            if (type === 'card') {
-                document.getElementById('card-probability-value').textContent = document.getElementById('card-probability-slider').value + "%";
-            } else if (type === 'injury') {
-                document.getElementById('injury-probability-value').textContent = document.getElementById('injury-probability-slider').value + "%";
-            }
+        if (!m3u8Url) {
+          alert("Model is not live or stream not found.");
+          return;
         }
 
-        function renderTable() {
-            leagueTable.sort((a, b) => b.points - a.points);
-            const tableBody = document.getElementById('table-body');
-            tableBody.innerHTML = '';
-            leagueTable.forEach((team, index) => {
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td>${index + 1}</td>
-                    <td>${team.name}</td>
-                    <td>${team.played}</td>
-                    <td>${team.won}</td>
-                    <td>${team.drawn}</td>
-                    <td>${team.lost}</td>
-                    <td>${team.points}</td>
-                `;
-                tableBody.appendChild(row);
-            });
+        const video = document.getElementById('video');
+        if (Hls.isSupported()) {
+          const hls = new Hls();
+          hls.loadSource(m3u8Url);
+          hls.attachMedia(video);
+          hls.on(Hls.Events.MEDIA_ATTACHED, () => {
+            video.muted = false;
+            video.play();
+          });
+        } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+          video.src = m3u8Url;
+          video.play();
+        } else {
+          alert("Your browser doesn't support HLS playback.");
         }
 
-        function startMatch() {
-            const team1 = document.getElementById('team1').value;
-            const team2 = document.getElementById('team2').value;
+      } catch (error) {
+        console.error("Error fetching stream:", error);
+        alert("Failed to fetch model data. Check console.");
+      }
+    }
+  </script>
 
-            if (!team1 || !team2 || team1 === team2) {
-                alert("Please select two different teams.");
-                return;
-            }
-
-            const score1 = Math.floor(Math.random() * 5);
-            const score2 = Math.floor(Math.random() * 5);
-            document.getElementById('match-result').textContent = `${team1} ${score1} - ${score2} ${team2}`;
-            document.getElementById('game-message').textContent = "Match completed!";
-
-            updateLeagueStats(team1, team2, score1, score2);
-            assignCards(team1, team2);
-            assignInjury(team1, team2);
-            renderTable();
-        }
-
-        function updateLeagueStats(team1, team2, score1, score2) {
-            let t1 = leagueTable.find(t => t.name === team1);
-            let t2 = leagueTable.find(t => t.name === team2);
-
-            t1.played++;
-            t2.played++;
-
-            if (score1 > score2) {
-                t1.won++; t2.lost++; t1.points += 3;
-            } else if (score1 < score2) {
-                t2.won++; t1.lost++; t2.points += 3;
-            } else {
-                t1.drawn++; t2.drawn++; t1.points++; t2.points++;
-            }
-        }
-
-        function assignCards(team1, team2) {
-            const prob = document.getElementById('card-probability-slider').value / 100;
-            if (Math.random() < prob) {
-                const team = Math.random() > 0.5 ? team1 : team2;
-                const player = teams[team][Math.floor(Math.random() * teams[team].length)];
-                const cardType = Math.random() > 0.75 ? "Red Card" : "Yellow Card"; // 25% chance of red
-                const reason = ["Dangerous tackle", "Handball", "Dissent"][Math.floor(Math.random() * 3)];
-                document.getElementById('card-info').textContent = `${player} from ${team} received a ${cardType} for ${reason}.`;
-            } else {
-                document.getElementById('card-info').textContent = "";
-            }
-        }
-
-        function assignInjury(team1, team2) {
-            const prob = document.getElementById('injury-probability-slider').value / 100;
-            if (Math.random() < prob) {
-                const team = Math.random() > 0.5 ? team1 : team2;
-                const player = teams[team][Math.floor(Math.random() * teams[team].length)];
-                const injuryReason = ["Hamstring strain", "Ankle sprain", "Knee injury", "Head collision"][Math.floor(Math.random() * 4)];
-                document.getElementById('injury-info').textContent = `${player} from ${team} got injured due to a ${injuryReason}.`;
-            } else {
-                document.getElementById('injury-info').textContent = "";
-            }
-        }
-
-        function populateTeamSelectors() {
-            const team1Select = document.getElementById('team1');
-            const team2Select = document.getElementById('team2');
-            Object.keys(teams).forEach(team => {
-                team1Select.innerHTML += `<option value="${team}">${team}</option>`;
-                team2Select.innerHTML += `<option value="${team}">${team}</option>`;
-            });
-        }
-
-        populateTeamSelectors();
-        renderTable();
-    </script>
 </body>
 </html>
