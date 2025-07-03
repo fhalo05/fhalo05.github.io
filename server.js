@@ -1,6 +1,3 @@
-// Replace with your Render backend URL:
-const socket = io('https://fhalo05-github-io.onrender.com');
-
 const localVideo = document.getElementById('localVideo');
 const remoteVideo = document.getElementById('remoteVideo');
 
