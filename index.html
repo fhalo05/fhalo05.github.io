@@ -20,17 +20,18 @@
     box-shadow: 0 0 15px #000;
   }
   #videos {
-    flex: 2;
-    display: flex;
-    flex-direction: column;
-    background: #000;
-  }
-  video {
-    width: 100%;
-    flex: 1;
-    background: black;
-    object-fit: cover;
-  }
+  flex: 2;
+  display: flex;
+  flex-direction: row; /* <-- changed from column to row */
+  background: #000;
+}
+
+video {
+  width: 50%;  /* each video gets half width */
+  height: 100%; /* full container height */
+  background: black;
+  object-fit: contain; /* show whole video, add letterbox if needed */
+}
   #chat {
     flex: 1;
     display: flex;
