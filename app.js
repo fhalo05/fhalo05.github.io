@@ -14,10 +14,9 @@ async function startLocalStream() {
   try {
     localStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
     localVideo.srcObject = localStream;
-    document.querySelector('button').style.display = 'none';
     socket.emit('ready');
   } catch (error) {
-    alert('Error accessing camera: ' + error.message);
+    alert('Error accessing camera/mic: ' + error.message);
   }
 }
 
@@ -65,9 +64,11 @@ socket.on('partner-disconnected', () => {
     peerConnection = null;
   }
   remoteVideo.srcObject = null;
+  appendMessage("Partner disconnected.");
 });
 
-// Chat
+// --- Chat ---
+
 const chatForm = document.getElementById('chatForm');
 const chatInput = document.getElementById('chatInput');
 const messages = document.getElementById('messages');
@@ -93,3 +94,7 @@ function appendMessage(msg) {
   messages.scrollTop = messages.scrollHeight;
 }
 
+// --- Start stream automatically on page load ---
+window.onload = () => {
+  startLocalStream();
+};
