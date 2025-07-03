@@ -22,24 +22,24 @@
   #videos {
   flex: 2;
   display: flex;
-  flex-direction: row; /* videos side-by-side */
-  background: #000; /* container background */
-  align-items: center; /* vertically center videos if they differ in height */
-  justify-content: center; /* center videos horizontally */
-  gap: 10px; /* space between videos */
+  flex-direction: row;
+  gap: 10px; /* optional spacing */
+  background: transparent; /* no background */
+  align-items: center;
+  justify-content: center;
 }
 
 video {
-  background: black;
+  background: transparent; /* no background */
   object-fit: contain;
-  max-width: 100%;
-  max-height: 80vh; /* max height for videos */
-  height: auto;
+  max-height: 80vh;
   width: auto;
-  box-shadow: 0 0 10px rgba(0,0,0,0.7);
-  border-radius: 8px;
+  height: auto;
   display: block;
+  border-radius: 0; /* remove any rounded corners */
+  box-shadow: none; /* remove any shadow */
 }
+
   #chat {
     flex: 1;
     display: flex;
