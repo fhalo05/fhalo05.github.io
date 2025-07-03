@@ -12,38 +12,31 @@ const iceServers = {
   ]
 };
 
-// Start local camera and mic
 async function startLocalStream() {
   try {
     localStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
     localVideo.srcObject = localStream;
+    document.querySelector('button').style.display = 'none';
   } catch (error) {
-    alert('Could not access camera/microphone: ' + error.message);
+    alert('Error accessing camera: ' + error.message);
   }
 }
 
-startLocalStream();
-
-// When matched with a partner
 socket.on('partner-found', async (partnerId) => {
   peerConnection = new RTCPeerConnection(iceServers);
 
-  // Add local tracks to peer connection
   localStream.getTracks().forEach(track => peerConnection.addTrack(track, localStream));
 
-  // Set remote video stream when received
   peerConnection.ontrack = (event) => {
     remoteVideo.srcObject = event.streams[0];
   };
 
-  // Send ICE candidates to partner
   peerConnection.onicecandidate = (event) => {
     if (event.candidate) {
       socket.emit('signal', { to: partnerId, data: { candidate: event.candidate } });
     }
   };
 
-  // To avoid both peers creating offer simultaneously, use socket IDs to decide who creates offer
   if (socket.id < partnerId) {
     const offer = await peerConnection.createOffer();
     await peerConnection.setLocalDescription(offer);
@@ -51,7 +44,6 @@ socket.on('partner-found', async (partnerId) => {
   }
 });
 
-// Receive signaling data
 socket.on('signal', async ({ from, data }) => {
   if (!peerConnection) return;
 
@@ -71,7 +63,6 @@ socket.on('signal', async ({ from, data }) => {
   }
 });
 
-// Clean up when partner disconnects
 socket.on('partner-disconnected', () => {
   if (peerConnection) {
     peerConnection.close();
