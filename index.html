@@ -27,11 +27,26 @@
   </style>
 </head>
 <body>
-  <button onclick="startLocalStream()">Enable Camera</button>
-  <video id="localVideo" autoplay muted playsinline></video>
-  <video id="remoteVideo" autoplay playsinline></video>
+ <div id="main" style="display: flex; gap: 20px; justify-content: center; flex-wrap: wrap;">
 
-  <script src="https://cdn.socket.io/4.8.1/socket.io.min.js"></script>
+    <!-- Video Section -->
+    <div id="videos" style="display: flex; flex-direction: column; align-items: center;">
+      <video id="localVideo" autoplay muted playsinline></video>
+      <video id="remoteVideo" autoplay playsinline></video>
+    </div>
+
+    <!-- Chat Section -->
+    <div id="chat" style="width: 300px; display: flex; flex-direction: column;">
+      <div id="messages" style="flex: 1; border: 1px solid #ccc; height: 300px; overflow-y: auto; padding: 5px; border-radius: 5px; background: #f9f9f9;"></div>
+      <form id="chatForm" style="display: flex; margin-top: 10px;">
+        <input id="chatInput" type="text" placeholder="Type a message..." required style="flex: 1; padding: 5px;" />
+        <button type="submit" style="padding: 5px 10px;">Send</button>
+      </form>
+    </div>
+
+  </div>
+
+  <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
   <script src="app.js"></script>
 </body>
 </html>
