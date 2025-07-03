@@ -2,14 +2,12 @@ const socket = io('https://fhalo05-github-io.onrender.com'); // Replace with you
 
 const localVideo = document.getElementById('localVideo');
 const remoteVideo = document.getElementById('remoteVideo');
-
 let localStream;
 let peerConnection;
+let partnerId = null;
 
 const iceServers = {
-  iceServers: [
-    { urls: 'stun:stun.l.google.com:19302' }
-  ]
+  iceServers: [{ urls: 'stun:stun.l.google.com:19302' }]
 };
 
 async function startLocalStream() {
@@ -17,12 +15,14 @@ async function startLocalStream() {
     localStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
     localVideo.srcObject = localStream;
     document.querySelector('button').style.display = 'none';
+    socket.emit('ready');
   } catch (error) {
     alert('Error accessing camera: ' + error.message);
   }
 }
 
-socket.on('partner-found', async (partnerId) => {
+socket.on('partner-found', async (id) => {
+  partnerId = id;
   peerConnection = new RTCPeerConnection(iceServers);
 
   localStream.getTracks().forEach(track => peerConnection.addTrack(track, localStream));
@@ -37,7 +37,7 @@ socket.on('partner-found', async (partnerId) => {
     }
   };
 
-  if (socket.id < partnerId) {
+  if (socket.id < id) {
     const offer = await peerConnection.createOffer();
     await peerConnection.setLocalDescription(offer);
     socket.emit('signal', { to: partnerId, data: { offer } });
@@ -55,11 +55,7 @@ socket.on('signal', async ({ from, data }) => {
   } else if (data.answer) {
     await peerConnection.setRemoteDescription(new RTCSessionDescription(data.answer));
   } else if (data.candidate) {
-    try {
-      await peerConnection.addIceCandidate(new RTCIceCandidate(data.candidate));
-    } catch (e) {
-      console.error('Error adding ICE candidate:', e);
-    }
+    await peerConnection.addIceCandidate(new RTCIceCandidate(data.candidate));
   }
 });
 
@@ -70,3 +66,30 @@ socket.on('partner-disconnected', () => {
   }
   remoteVideo.srcObject = null;
 });
+
+// Chat
+const chatForm = document.getElementById('chatForm');
+const chatInput = document.getElementById('chatInput');
+const messages = document.getElementById('messages');
+
+chatForm.addEventListener('submit', (e) => {
+  e.preventDefault();
+  const message = chatInput.value.trim();
+  if (message && partnerId) {
+    socket.emit('chat-message', { to: partnerId, message });
+    appendMessage(`You: ${message}`);
+    chatInput.value = '';
+  }
+});
+
+socket.on('chat-message', ({ from, message }) => {
+  appendMessage(`Stranger: ${message}`);
+});
+
+function appendMessage(msg) {
+  const div = document.createElement('div');
+  div.textContent = msg;
+  messages.appendChild(div);
+  messages.scrollTop = messages.scrollHeight;
+}
+
