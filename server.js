@@ -1,6 +1,3 @@
-// Replace this URL with your Render backend URL
-const socket = io('https://your-backend-name.onrender.com');
-
 const localVideo = document.getElementById('localVideo');
 const remoteVideo = document.getElementById('remoteVideo');
 
