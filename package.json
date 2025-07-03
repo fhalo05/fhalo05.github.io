@@ -1,0 +1,18 @@
+{
+  "name": "omegle-clone",
+  "version": "1.0.0",
+  "description": "Simple Omegle clone backend with Express and Socket.IO",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "socket.io": "^4.7.2"
+  },
+  "engines": {
+    "node": ">=16"
+  },
+  "author": "fhalo",
+  "license": "MIT"
+}
