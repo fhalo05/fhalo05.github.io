@@ -4,28 +4,34 @@
   <meta charset="UTF-8" />
   <title>Omegle Clone</title>
   <style>
-    body { font-family: sans-serif; text-align: center; margin: 20px; }
-    video { width: 45%; margin: 10px; border-radius: 8px; background: black; }
-    #videos { margin-top: 20px; }
+    body {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-top: 40px;
+      font-family: Arial, sans-serif;
+    }
+    video {
+      width: 45vw;
+      max-width: 400px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      margin: 10px 0;
+    }
+    button {
+      padding: 10px 20px;
+      font-size: 16px;
+      cursor: pointer;
+      margin-bottom: 20px;
+    }
   </style>
 </head>
 <body>
-  <h1>Omegle Clone</h1>
-  <div id="videos">
-    <video id="localVideo" autoplay muted playsinline></video>
-    <video id="remoteVideo" autoplay playsinline></video>
-  </div>
-
-  <!-- Socket.IO client -->
-  <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"
-          integrity="sha384-y/NhzsGHK1AzgH8x+YV2jVjdxP59CwI9YUDKo91yqa2RUjaKIzRzmL8XJmUZwONo"
-          crossorigin="anonymous"></script>
-
-  <!-- Your JS -->
-  <script src="server.js"></script>
+  <button onclick="startLocalStream()">Enable Camera</button>
+  <video id="localVideo" autoplay muted playsinline></video>
+  <video id="remoteVideo" autoplay playsinline></video>
 
   <script src="https://cdn.socket.io/4.8.1/socket.io.min.js"></script>
   <script src="app.js"></script>
-  
 </body>
 </html>
