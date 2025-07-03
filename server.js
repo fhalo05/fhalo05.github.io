@@ -1,3 +1,6 @@
+// Replace with your Render backend URL:
+const socket = io('https://fhalo05-github-io.onrender.com');
+
 const localVideo = document.getElementById('localVideo');
 const remoteVideo = document.getElementById('remoteVideo');
 
@@ -11,8 +14,13 @@ const servers = {
 };
 
 async function startCamera() {
-  localStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
-  localVideo.srcObject = localStream;
+  try {
+    localStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+    localVideo.srcObject = localStream;
+  } catch (err) {
+    alert('Could not get camera/microphone: ' + err);
+    console.error(err);
+  }
 }
 
 startCamera();
@@ -34,6 +42,7 @@ socket.on('partner-found', async (partnerId) => {
     }
   };
 
+  // To avoid both peers creating offers simultaneously:
   if (socket.id < partnerId) {
     const offer = await peerConnection.createOffer();
     await peerConnection.setLocalDescription(offer);
@@ -59,7 +68,9 @@ socket.on('signal', async ({ from, data }) => {
 });
 
 socket.on('partner-disconnected', () => {
-  if (peerConnection) peerConnection.close();
+  if (peerConnection) {
+    peerConnection.close();
+    peerConnection = null;
+  }
   remoteVideo.srcObject = null;
 });
-
