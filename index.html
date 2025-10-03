@@ -1,287 +1,98 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>My Minecraft Builds</title>
-  <meta name="description" content="Showcase of my Minecraft builds — galleries, details, tags and more." />
-  <!-- Open Graph (edit to use your images/URL) -->
-  <meta property="og:title" content="My Minecraft Builds" />
-  <meta property="og:description" content="A gallery of my favourite Minecraft creations." />
-  <meta property="og:image" content="images/og-preview.jpg" />
-
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
-
   <style>
-    :root{
-      --bg:#0f1724; --card:#0b1220; --muted:#94a3b8; --accent:#10b981; --glass:rgba(255,255,255,0.04);
-      --max-width:1200px;
+    body{
+      margin:0;
+      font-family: Arial, sans-serif;
+      background:#0f1724;
+      color:#fff;
+      line-height:1.5;
+      padding:20px;
     }
-    :root.light{ --bg:#f8fafc; --card:#ffffff; --muted:#475569; --accent:#059669; --glass:rgba(0,0,0,0.04); }
-
-    *{box-sizing:border-box}
-    html,body{height:100%}
-    body{font-family:Inter,system-ui,Segoe UI,Roboto,Helvetica,Arial,sans-serif;margin:0;background:linear-gradient(180deg,var(--bg),#071022);color: #e6eef7;}
-    .container{max-width:var(--max-width);margin:36px auto;padding:0 20px}
-
-    header{display:flex;align-items:center;justify-content:space-between;gap:16px}
-    .brand{display:flex;gap:12px;align-items:center}
-    .logo{width:56px;height:56px;background:linear-gradient(135deg,#6ee7b7,#34d399);display:grid;place-items:center;border-radius:12px;box-shadow:0 6px 20px rgba(2,6,23,0.6);font-weight:800;color:#042024}
-    h1{margin:0;font-size:20px}
-    p.lead{margin:0;color:var(--muted);font-size:13px}
-
-    .controls{display:flex;gap:8px;align-items:center}
-    .search{padding:8px 12px;border-radius:10px;border:0;background:var(--card);color:inherit;min-width:220px}
-    .filters{display:flex;gap:8px;flex-wrap:wrap}
-    .chip{padding:8px 12px;border-radius:999px;background:var(--glass);border:1px solid rgba(255,255,255,0.04);cursor:pointer;font-size:13px}
-    .chip.active{outline:2px solid var(--accent);box-shadow:0 6px 18px rgba(2,6,23,0.6)}
-
-    .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:18px;margin-top:20px}
-    .card{background:linear-gradient(180deg,var(--card),rgba(255,255,255,0.02));border-radius:12px;padding:10px;position:relative;overflow:hidden;border:1px solid rgba(255,255,255,0.03)}
-    .thumb{width:100%;height:160px;object-fit:cover;border-radius:8px}
-    .card h3{margin:10px 0 4px;font-size:16px}
-    .meta{font-size:12px;color:var(--muted)}
-    .tags{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
-    .tag{padding:6px 8px;border-radius:999px;background:var(--glass);font-size:12px}
-
-    .empty{padding:40px;text-align:center;color:var(--muted)}
-
-    /* modal */
-    .modal{position:fixed;inset:0;background:rgba(2,6,23,0.6);display:none;align-items:center;justify-content:center;padding:20px}
-    .modal.open{display:flex}
-    .modal-card{width:100%;max-width:900px;background:var(--card);border-radius:12px;padding:16px;display:grid;grid-template-columns:1fr 320px;gap:16px}
-    .carousel{position:relative}
-    .carousel img{width:100%;height:480px;object-fit:cover;border-radius:8px}
-    .carousel-thumbs{display:flex;gap:8px;margin-top:8px;overflow:auto}
-    .thumb-small{width:72px;height:54px;object-fit:cover;border-radius:6px;cursor:pointer}
-    .closebtn{position:absolute;right:10px;top:10px;background:transparent;border:0;color:var(--muted);font-size:22px}
-
-    .details{padding:8px}
-    .details h2{margin:0}
-    .details p{color:var(--muted)}
-    .meta-big{font-size:13px;color:var(--muted);margin-top:8px}
-
-    footer{margin:48px 0;text-align:center;color:var(--muted)}
-
-    /* responsive */
-    @media (max-width:900px){.modal-card{grid-template-columns:1fr;}.carousel img{height:320px}.thumb-small{width:56px;height:42px}}
-
-    /* simple transitions */
-    .card,.chip,.logo{transition:transform .18s ease,box-shadow .18s ease}
-    .card:hover{transform:translateY(-6px);box-shadow:0 12px 30px rgba(2,6,23,0.6)}
-
-    /* Light mode tweak */
-    :root.light body{color:#0b1220}
-
+    header{
+      text-align:center;
+      margin-bottom:30px;
+    }
+    header h1{
+      margin:0;
+      font-size:2.5em;
+    }
+    header p{
+      color:#bbb;
+    }
+    section{
+      margin-bottom:40px;
+    }
+    section h2{
+      font-size:1.8em;
+      margin-bottom:10px;
+      border-bottom:2px solid #60a5fa;
+      padding-bottom:5px;
+    }
+    .build{
+      margin-bottom:25px;
+    }
+    .build img{
+      max-width:100%;
+      height:auto;
+      display:block;
+      margin:10px 0;
+      border-radius:8px;
+    }
+    footer{
+      text-align:center;
+      margin-top:40px;
+      color:#888;
+      font-size:0.9em;
+    }
   </style>
 </head>
 <body>
-  <div class="container">
-    <header>
-      <div class="brand">
-        <div class="logo">MC</div>
-        <div>
-          <h1>My Minecraft Builds</h1>
-          <p class="lead">A gallery to show off your best creations — click a build for details.</p>
-        </div>
+  <header>
+    <h1>My Minecraft Builds</h1>
+    <p>A showcase of my favorite creations in survival, creative, and redstone!</p>
+  </header>
+
+  <main>
+    <section>
+      <h2>Survival Builds</h2>
+      <div class="build">
+        <h3>Cozy Starter House</h3>
+        <img src="starter-house.jpg" alt="Minecraft Starter House">
+        <p>A small survival base with a farm, storage, and enchanting table.</p>
       </div>
-
-      <div class="controls">
-        <input id="search" class="search" placeholder="Search titles, tags or description..." />
-        <button id="themeToggle" class="chip">🌙</button>
+      <div class="build">
+        <h3>Medieval Castle</h3>
+        <img src="castle.jpg" alt="Minecraft Castle">
+        <p>A grand stone castle with towers, walls, and a courtyard.</p>
       </div>
-    </header>
+    </section>
 
-    <nav style="margin-top:18px;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap">
-      <div class="filters" id="filters">
-        <button class="chip active" data-filter="all">All</button>
-        <button class="chip" data-filter="survival">Survival</button>
-        <button class="chip" data-filter="creative">Creative</button>
-        <button class="chip" data-filter="redstone">Redstone</button>
-        <button class="chip" data-filter="city">City</button>
+    <section>
+      <h2>Creative Builds</h2>
+      <div class="build">
+        <h3>Modern Mansion</h3>
+        <img src="mansion.jpg" alt="Minecraft Modern Mansion">
+        <p>A sleek modern house with glass walls, pool, and garden.</p>
       </div>
+    </section>
 
-      <div style="display:flex;gap:8px;align-items:center">
-        <div class="chip" id="sortBtn">Sort: Newest</div>
-        <div style="font-size:13px;color:var(--muted)">Showing <span id="count">0</span> builds</div>
+    <section>
+      <h2>Redstone Builds</h2>
+      <div class="build">
+        <h3>Secret Door</h3>
+        <img src="secret-door.jpg" alt="Minecraft Secret Door">
+        <p>A hidden redstone piston door activated with a lever.</p>
       </div>
-    </nav>
+    </section>
+  </main>
 
-    <main>
-      <div id="grid" class="grid" aria-live="polite"></div>
-      <div id="empty" class="empty" style="display:none">No builds found. Try clearing filters.</div>
-    </main>
-
-    <footer>
-      Tip: Replace the sample images in the `builds` array with your screenshots or hosted images. 🛠️
-    </footer>
-  </div>
-
-  <!-- Modal -->
-  <div id="modal" class="modal" role="dialog" aria-hidden="true">
-    <div class="modal-card">
-      <div>
-        <button class="closebtn" id="closeModal">✕</button>
-        <div class="carousel">
-          <img id="modalMainImg" src="" alt="Build image" />
-          <div class="carousel-thumbs" id="modalThumbs"></div>
-        </div>
-      </div>
-      <aside class="details">
-        <h2 id="modalTitle">Build Title</h2>
-        <div class="meta-big" id="modalMeta">Category • Date</div>
-        <p id="modalDesc">Description goes here.</p>
-        <div class="tags" id="modalTags"></div>
-        <div style="margin-top:16px;display:flex;gap:8px;flex-wrap:wrap">
-          <a id="downloadBtn" class="chip" href="#" download>Download Images</a>
-          <button class="chip" id="visitWorld">Open World (link)</button>
-        </div>
-      </aside>
-    </div>
-  </div>
-
-  <script>
-    // ===== Sample data: edit this array to add your builds =====
-    const builds = [
-      {
-        id: 'castle-01',
-        title: 'Grand Oak Castle',
-        category: 'survival',
-        date: '2024-08-12',
-        description: 'A sprawling oak-and-stone castle with towers and an inner courtyard. Built in survival mode. Features a working gate and fireplace interiors.',
-        tags: ['castle','survival','stone'],
-        images: ['images/castle-1.jpg','images/castle-2.jpg','images/castle-3.jpg']
-      },
-      {
-        id: 'sky-city',
-        title: 'Sky City',
-        category: 'creative',
-        date: '2023-11-03',
-        description: 'Floating islands with modern glass architecture and bridge networks, created in creative mode with custom lighting.',
-        tags: ['city','creative','floating'],
-        images: ['images/sky-1.jpg','images/sky-2.jpg']
-      },
-      {
-        id: 'redstone-farm',
-        title: 'Automatic Farm',
-        category: 'redstone',
-        date: '2025-02-20',
-        description: 'Compact automated crop and animal farms using observer/piston mechanics. Optimized for space and speed.',
-        tags: ['redstone','farm','automation'],
-        images: ['images/farm-1.jpg','images/farm-2.jpg','images/farm-3.jpg']
-      },
-      {
-        id: 'medieval-village',
-        title: 'Medieval Village',
-        category: 'city',
-        date: '2022-05-16',
-        description: 'Cobblestone paths, market stalls, and an old mill. Good for roleplay servers and showcases.',
-        tags: ['village','medieval','roleplay'],
-        images: ['images/village-1.jpg']
-      }
-    ];
-
-    const grid = document.getElementById('grid');
-    const countEl = document.getElementById('count');
-    const emptyEl = document.getElementById('empty');
-    const searchInput = document.getElementById('search');
-    const filterButtons = document.querySelectorAll('#filters .chip');
-    const themeToggle = document.getElementById('themeToggle');
-    const sortBtn = document.getElementById('sortBtn');
-
-    let activeFilter = 'all';
-    let sortNewest = true;
-
-    // Restore theme
-    (function(){
-      const saved = localStorage.getItem('site-theme');
-      if(saved === 'light'){document.documentElement.classList.add('light');themeToggle.textContent='☀️'}
-    })();
-
-    function renderGrid(items){
-      grid.innerHTML = '';
-      if(items.length === 0){emptyEl.style.display='block';countEl.textContent='0';return}
-      emptyEl.style.display='none';
-      countEl.textContent = items.length;
-      items.forEach(b => {
-        const el = document.createElement('article');
-        el.className='card';
-        el.innerHTML = `
-          <img data-src="${b.images[0]}" alt="${escapeHtml(b.title)}" class="thumb" loading="lazy" />
-          <h3>${escapeHtml(b.title)}</h3>
-          <div class="meta">${b.category} • ${b.date}</div>
-          <div class="tags">${b.tags.map(t=>`<span class="tag">${escapeHtml(t)}</span>`).join('')}</div>
-        `;
-        el.addEventListener('click',()=>openModal(b));
-        grid.appendChild(el);
-      });
-      // lazy-load images (simple)
-      document.querySelectorAll('[data-src]').forEach(img=>{img.src=img.dataset.src; img.removeAttribute('data-src');});
-    }
-
-    function escapeHtml(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
-
-    function applyFilter(){
-      const q = searchInput.value.trim().toLowerCase();
-      let items = builds.slice();
-      if(activeFilter !== 'all') items = items.filter(b => b.category === activeFilter || (b.tags||[]).includes(activeFilter));
-      if(q) items = items.filter(b => (b.title+b.description+(b.tags||[]).join(' ')).toLowerCase().includes(q));
-      items.sort((a,b)=> sortNewest ? new Date(b.date)-new Date(a.date) : new Date(a.date)-new Date(b.date));
-      renderGrid(items);
-    }
-
-    filterButtons.forEach(btn=>btn.addEventListener('click',()=>{
-      filterButtons.forEach(b=>b.classList.remove('active'));
-      btn.classList.add('active');
-      activeFilter = btn.dataset.filter;
-      applyFilter();
-    }))
-
-    searchInput.addEventListener('input',applyFilter);
-    sortBtn.addEventListener('click',()=>{sortNewest = !sortNewest; sortBtn.textContent = `Sort: ${sortNewest? 'Newest' : 'Oldest'}`; applyFilter();});
-
-    themeToggle.addEventListener('click',()=>{
-      const isLight = document.documentElement.classList.toggle('light');
-      themeToggle.textContent = isLight? '☀️' : '🌙';
-      localStorage.setItem('site-theme', isLight ? 'light' : 'dark');
-    });
-
-    // Modal logic
-    const modal = document.getElementById('modal');
-    const closeModalBtn = document.getElementById('closeModal');
-    const modalMainImg = document.getElementById('modalMainImg');
-    const modalThumbs = document.getElementById('modalThumbs');
-    const modalTitle = document.getElementById('modalTitle');
-    const modalDesc = document.getElementById('modalDesc');
-    const modalMeta = document.getElementById('modalMeta');
-    const modalTags = document.getElementById('modalTags');
-    const downloadBtn = document.getElementById('downloadBtn');
-    const visitWorld = document.getElementById('visitWorld');
-
-    function openModal(build){
-      modal.classList.add('open');
-      modal.setAttribute('aria-hidden','false');
-      modalTitle.textContent = build.title;
-      modalDesc.textContent = build.description;
-      modalMeta.textContent = `${build.category} • ${build.date}`;
-      modalTags.innerHTML = build.tags.map(t=>`<span class="tag">${t}</span>`).join('');
-      modalThumbs.innerHTML = '';
-      modalMainImg.src = build.images[0] || '';
-      build.images.forEach((src,i)=>{
-        const img = document.createElement('img'); img.src = src; img.className='thumb-small'; img.alt = build.title + ' ' + (i+1);
-        img.addEventListener('click',()=>{modalMainImg.src = src});
-        modalThumbs.appendChild(img);
-      });
-      // download zip: link to first image as default (advanced: generate zip on server)
-      downloadBtn.href = build.images[0] || '#';
-      visitWorld.onclick = ()=>{alert('If you have a world download or server link, replace visitWorld button behavior in script.');}
-    }
-    closeModalBtn.addEventListener('click',()=>{modal.classList.remove('open');modal.setAttribute('aria-hidden','true')});
-    modal.addEventListener('click',(e)=>{if(e.target === modal){modal.classList.remove('open');modal.setAttribute('aria-hidden','true')}});
-
-    // initial render
-    applyFilter();
-
-  </script>
+  <footer>
+    <p>© 2025 My Minecraft Showcase</p>
+  </footer>
 </body>
 </html>
