@@ -1,98 +1,267 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>My Minecraft Builds</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>BlockRealm — Minecraft Server</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
   <style>
-    body{
-      margin:0;
-      font-family: Arial, sans-serif;
-      background:#0f1724;
-      color:#fff;
-      line-height:1.5;
-      padding:20px;
+    :root{
+      --bg:#0b1220;
+      --card:#0f1724;
+      --accent:#62d36e; /* grass green */
+      --muted:#9aa7b2;
+      --glass:rgba(255,255,255,0.03);
     }
-    header{
-      text-align:center;
-      margin-bottom:30px;
-    }
-    header h1{
-      margin:0;
-      font-size:2.5em;
-    }
-    header p{
-      color:#bbb;
-    }
-    section{
-      margin-bottom:40px;
-    }
-    section h2{
-      font-size:1.8em;
-      margin-bottom:10px;
-      border-bottom:2px solid #60a5fa;
-      padding-bottom:5px;
-    }
-    .build{
-      margin-bottom:25px;
-    }
-    .build img{
-      max-width:100%;
-      height:auto;
-      display:block;
-      margin:10px 0;
-      border-radius:8px;
-    }
-    footer{
-      text-align:center;
-      margin-top:40px;
-      color:#888;
-      font-size:0.9em;
-    }
+    *{box-sizing:border-box}
+    html,body{height:100%;margin:0;background:linear-gradient(180deg,#08121b 0%, #071018 60%), url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64"><rect width="64" height="64" fill="%23060a0f"/><path d="M0 32h64v1H0z" fill="%23090f17" opacity="0.3"/></svg>') repeat; font-family:Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial; color:#dbeaf0}
+    header{padding:36px 20px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+    .brand{display:flex;align-items:center;gap:14px}
+    .logo{width:64px;height:64px;display:grid;place-items:center;border-radius:10px;background:linear-gradient(180deg,#8adf8f,#4ab34a);box-shadow:0 6px 18px rgba(0,0,0,0.6);font-family:'Press Start 2P',monospace;color:#082b0b}
+    .site-title{line-height:1}
+    .site-title h1{margin:0;font-weight:800;font-size:18px}
+    .site-title p{margin:0;color:var(--muted);font-size:12px}
+
+    .hero{display:grid;grid-template-columns:1fr 420px;gap:28px;padding:0 20px 40px}
+    @media (max-width:920px){.hero{grid-template-columns:1fr;}.aside{order:-1}}
+
+    .card{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));border-radius:14px;padding:22px;box-shadow:0 6px 30px rgba(2,6,12,0.6);border:1px solid rgba(255,255,255,0.03)}
+
+    .lead{font-size:32px;font-weight:700;margin:8px 0 14px;font-family:'Press Start 2P',monospace;color: #fff}
+    .sub{color:var(--muted);margin-bottom:18px}
+
+    /* server box */
+    .aside .server-status{display:flex;flex-direction:column;gap:18px}
+    .ip-row{display:flex;align-items:center;gap:8px}
+    .ip{background:var(--glass);padding:10px 14px;border-radius:10px;font-weight:700;font-family:'Press Start 2P',monospace}
+    .btn{background:linear-gradient(180deg,var(--accent),#39a84a);border:none;padding:10px 14px;border-radius:10px;color:#05220b;font-weight:700;cursor:pointer;font-family:'Press Start 2P',monospace}
+    .btn.ghost{background:transparent;border:1px solid rgba(255,255,255,0.06);color:var(--muted);font-family:Inter}
+    .status{display:flex;align-items:center;gap:10px}
+    .dot{width:12px;height:12px;border-radius:50%}
+    .dot.online{background:var(--accent);box-shadow:0 0 10px rgba(98,211,110,0.25)}
+    .dot.offline{background:#c04a4a}
+
+    /* features */
+    .features{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:18px}
+    @media (max-width:920px){.features{grid-template-columns:repeat(2,1fr)}}
+    .feature{background:linear-gradient(180deg, rgba(255,255,255,0.015), rgba(255,255,255,0.01));padding:12px;border-radius:10px;text-align:center}
+    .feature h3{margin:6px 0 2px;font-size:13px}
+    .feature p{margin:0;color:var(--muted);font-size:12px}
+
+    /* map/gallery */
+    .map{height:320px;border-radius:12px;overflow:hidden;display:flex;align-items:center;justify-content:center;background-image:linear-gradient(45deg, rgba(10,20,10,0.2), rgba(0,0,0,0.1));position:relative}
+    .map .fake-screenshot{width:92%;height:86%;background-image:linear-gradient(180deg,#083119,#0b2519);border:6px solid rgba(255,255,255,0.02);box-shadow:inset 0 12px 40px rgba(0,0,0,0.6);border-radius:8px;display:grid;place-items:center;color:#91f6b4;font-family:'Press Start 2P';font-size:12px}
+
+    footer{padding:30px 20px 80px;color:var(--muted);display:flex;justify-content:space-between;align-items:center}
+
+    /* mini sections */
+    .row{display:flex;gap:12px;align-items:center}
+    .players{display:flex;flex-direction:column;gap:8px}
+    .player-list{display:flex;gap:8px;flex-wrap:wrap}
+    .player{background:var(--glass);padding:8px 10px;border-radius:8px;font-family:Inter;font-weight:600}
+
+    .cta{display:flex;gap:12px}
+
+    /* pixel footer */
+    .pixel{font-family:'Press Start 2P';letter-spacing:1px}
+
+    /* little decorative grass */
+    .grass-row{display:flex;gap:4px}
+    .grass{width:10px;height:14px;background:linear-gradient(180deg,#6ee27b,#2f9b3b);box-shadow:0 2px 6px rgba(0,0,0,0.4);transform-origin:center;}
+
   </style>
 </head>
 <body>
   <header>
-    <h1>My Minecraft Builds</h1>
-    <p>A showcase of my favorite creations in survival, creative, and redstone!</p>
+    <div class="brand">
+      <div class="logo">BR</div>
+      <div class="site-title">
+        <h1>BlockRealm</h1>
+        <p>Survival • Creative • PvP</p>
+      </div>
+    </div>
+    <div class="row">
+      <nav style="display:flex;gap:12px;align-items:center">
+        <button class="btn ghost" onclick="document.getElementById('features').scrollIntoView({behavior:'smooth'})">Features</button>
+        <button class="btn ghost" onclick="document.getElementById('gallery').scrollIntoView({behavior:'smooth'})">Gallery</button>
+      </nav>
+    </div>
   </header>
 
-  <main>
+  <main class="hero">
     <section>
-      <h2>Survival Builds</h2>
-      <div class="build">
-        <h3>Cozy Starter House</h3>
-        <img src="starter-house.jpg" alt="Minecraft Starter House">
-        <p>A small survival base with a farm, storage, and enchanting table.</p>
+      <div class="card">
+        <div class="lead">Welcome to BlockRealm</div>
+        <div class="sub">A cozy Minecraft community server — friendly staff, frequent events, and massive builds. Play with friends or make new ones!</div>
+
+        <div class="card" id="connect">
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <div>
+              <div style="font-size:11px;color:var(--muted)">Server IP</div>
+              <div class="ip-row" style="margin-top:8px">
+                <div class="ip" id="server-ip">play.blockrealm.gg</div>
+                <button class="btn" onclick="copyIP()">Copy</button>
+              </div>
+            </div>
+            <div style="text-align:right">
+              <div style="font-size:11px;color:var(--muted)">Status</div>
+              <div class="status" style="margin-top:8px">
+                <div class="dot offline" id="status-dot"></div>
+                <div id="status-text">Checking...</div>
+              </div>
+            </div>
+          </div>
+
+          <div style="margin-top:16px;display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap">
+            <div class="players">
+              <div style="font-size:11px;color:var(--muted)">Players Online</div>
+              <div class="player-list" id="player-list">
+                <!-- dynamic -->
+              </div>
+            </div>
+            <div class="cta">
+              <button class="btn" onclick="alert('Launch Minecraft, click Multiplayer → Add Server, and paste the IP!')">How to Join</button>
+              <button class="btn ghost" onclick="alert('Server rules:\n1) Be kind\n2) No griefing\n3) No cheating')">Rules</button>
+            </div>
+          </div>
+        </div>
+
+        <div id="features" style="margin-top:18px">
+          <div style="font-size:13px;font-weight:700;margin-bottom:8px">Server Features</div>
+          <div class="features">
+            <div class="feature"><div style="font-size:20px">⚒️</div><h3>Custom Plugins</h3><p>Unique gameplay mechanics & quality-of-life tools.</p></div>
+            <div class="feature"><div style="font-size:20px">🏆</div><h3>Events</h3><p>Weekly builds, PvP tournaments, and scavenger hunts.</p></div>
+            <div class="feature"><div style="font-size:20px">🌍</div><h3>Large Map</h3><p>Explore varied biomes and player-made cities.</p></div>
+          </div>
+        </div>
+
       </div>
-      <div class="build">
-        <h3>Medieval Castle</h3>
-        <img src="castle.jpg" alt="Minecraft Castle">
-        <p>A grand stone castle with towers, walls, and a courtyard.</p>
+
+      <div style="height:18px"></div>
+
+      <div class="card">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <div>
+            <div style="font-size:13px;font-weight:700">About the Community</div>
+            <div style="color:var(--muted);font-size:13px;margin-top:6px">We value friendliness above all. Our moderators make sure the server is welcoming, and our Discord is active 24/7.</div>
+          </div>
+          <div class="grass-row">
+            <div class="grass"></div><div class="grass" style="height:10px;transform:scaleY(0.9)"></div><div class="grass" style="height:16px"></div>
+          </div>
+        </div>
       </div>
+
     </section>
 
-    <section>
-      <h2>Creative Builds</h2>
-      <div class="build">
-        <h3>Modern Mansion</h3>
-        <img src="mansion.jpg" alt="Minecraft Modern Mansion">
-        <p>A sleek modern house with glass walls, pool, and garden.</p>
-      </div>
-    </section>
+    <aside class="aside">
+      <div class="card server-status">
+        <div style="font-size:13px;font-weight:800">Server Snapshot</div>
+        <div class="map" id="gallery">
+          <div class="fake-screenshot">[ In-game Screenshot Preview ]</div>
+        </div>
 
-    <section>
-      <h2>Redstone Builds</h2>
-      <div class="build">
-        <h3>Secret Door</h3>
-        <img src="secret-door.jpg" alt="Minecraft Secret Door">
-        <p>A hidden redstone piston door activated with a lever.</p>
+        <div style="display:flex;justify-content:space-between;margin-top:12px;gap:8px">
+          <div style="flex:1">
+            <div style="font-size:12px;color:var(--muted)">Version</div>
+            <div style="font-weight:700;margin-top:6px">1.20.x</div>
+          </div>
+          <div style="flex:1">
+            <div style="font-size:12px;color:var(--muted)">World Age</div>
+            <div style="font-weight:700;margin-top:6px">3 months</div>
+          </div>
+        </div>
+
+        <div style="margin-top:12px;display:flex;gap:8px">
+          <button class="btn" onclick="joinViaWeb()">Play Now</button>
+          <button class="btn ghost" onclick="openDiscord()">Discord</button>
+        </div>
+
       </div>
-    </section>
+
+      <div style="height:16px"></div>
+
+      <div class="card">
+        <div style="font-size:13px;font-weight:700">Top Builders</div>
+        <div class="player-list" style="margin-top:10px">
+          <div class="player">Aether</div>
+          <div class="player">MossyOak</div>
+          <div class="player">PixelPry</div>
+        </div>
+      </div>
+
+    </aside>
   </main>
 
   <footer>
-    <p>© 2025 My Minecraft Showcase</p>
+    <div class="pixel">© BlockRealm 2025</div>
+    <div style="display:flex;gap:10px;align-items:center">
+      <div style="font-size:12px;color:var(--muted)">Server IP</div>
+      <div class="ip">play.blockrealm.gg</div>
+    </div>
   </footer>
+
+  <script>
+    // small client-side "status" simulator (replace with real API calls when available)
+    const statusDot = document.getElementById('status-dot');
+    const statusText = document.getElementById('status-text');
+    const playerList = document.getElementById('player-list');
+
+    function randomPlayers(){
+      const names = ['Frosty','Echo','Nimble','Blocky','Luna','Cobalt','Rook','Vex','Glim','Zee','Poppy','Cinder'];
+      const count = Math.floor(Math.random()*12); // 0-11 players
+      const chosen = [];
+      while(chosen.length < count){
+        const pick = names[Math.floor(Math.random()*names.length)];
+        if(!chosen.includes(pick)) chosen.push(pick);
+      }
+      return chosen;
+    }
+
+    function updateStatus(){
+      // pretend ping: 70% chance online
+      const online = Math.random() < 0.7;
+      if(online){
+        statusDot.classList.remove('offline');
+        statusDot.classList.add('online');
+        statusText.textContent = 'Online';
+      } else {
+        statusDot.classList.remove('online');
+        statusDot.classList.add('offline');
+        statusText.textContent = 'Offline';
+      }
+
+      // players
+      const players = online ? randomPlayers() : [];
+      playerList.innerHTML = '';
+      if(players.length === 0){
+        const el = document.createElement('div'); el.className='player'; el.textContent='No players online'; playerList.appendChild(el);
+      } else {
+        players.forEach(p => {const el = document.createElement('div'); el.className='player'; el.textContent=p; playerList.appendChild(el)});
+      }
+    }
+
+    // initially run
+    updateStatus();
+    setInterval(updateStatus, 9000);
+
+    function copyIP(){
+      const ip = document.getElementById('server-ip').textContent;
+      navigator.clipboard?.writeText(ip).then(()=>{
+        const old = document.querySelector('.btn');
+        alert('Copied '+ip+' to clipboard — paste into Minecraft!');
+      }).catch(()=>{alert('Copy failed — select and copy manually.')});
+    }
+
+    function joinViaWeb(){
+      alert('Web-based joining requires a Minecraft launcher. Copy the server IP and add it in Multiplayer.');
+    }
+
+    function openDiscord(){
+      window.open('https://discord.gg/', '_blank');
+    }
+
+  </script>
 </body>
 </html>
