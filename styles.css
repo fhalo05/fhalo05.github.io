@@ -1,0 +1,86 @@
+/* Global aesthetic */
+body {
+  margin: 0;
+  background: #0e0e10;       /* dark streaming background */
+  color: #efeff1;            /* light gray text */
+  font-family: Arial, sans-serif;
+  overflow-x: hidden;
+}
+
+/* Header bar at the top */
+.header {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  height: 64px;
+  background: #18181b;       /* dark header bar */
+  color: #fff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 22px;
+  font-weight: bold;
+  border-bottom: 2px solid #26262c;
+  z-index: 1000;
+}
+
+/* Main layout wrapper */
+#video-container {
+  margin-top: 80px;          /* space for header */
+  display: flex;
+  justify-content: center;
+  padding: 20px;
+}
+
+/* Video player styling (large and wide) */
+#video {
+  width: 100%;
+  max-width: 1100px;         /* livestream platforms use wide players */
+  height: auto;
+  background: #000;
+  border: none; 
+  outline: none;
+}
+
+/* Optional: Stream info bar beneath the video */
+.stream-info {
+  max-width: 1100px;
+  margin: 12px auto;
+  padding: 10px;
+  color: #cfcfd1;
+  font-size: 15px;
+  border-bottom: 1px solid #26262c;
+}
+
+/* Optional: Chat sidebar (Twitch-style) */
+.chat {
+  width: 320px;
+  background: #18181b;
+  border-left: 2px solid #26262c;
+  color: #efeff1;
+  padding: 10px;
+  overflow-y: auto;
+  height: calc(100vh - 80px);
+}
+
+#restart-btn {
+  display: block;
+  margin: 20px auto;
+  padding: 12px 20px;
+  background: #9147ff;     /* Twitch-style purple */
+  color: white;
+  font-size: 16px;
+  font-weight: bold;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+#restart-btn:hover {
+  background: #7a2dff;
+}
+
+#restart-btn:active {
+  transform: scale(0.97);
+}
